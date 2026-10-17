@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkVault · Purple Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', system-ui, sans-serif;
+        }
+
+        :root {
+            --purple-dark: #3a1f6b;
+            --purple-main: #6b3fa0;
+            --purple-light: #a78bda;
+            --purple-glow: #c9a7ff;
+            --purple-bg: #e8ddf5;
+            --purple-soft: #d4c4ee;
+            --card-bg: rgba(255, 255, 255, 0.55);
+            --card-border: rgba(107, 63, 160, 0.25);
+            --text-dark: #2a1a4a;
+            --text-mid: #5a4580;
+            --text-muted: #8b7ba8;
+            --white: #ffffff;
+        }
+
+        html, body { scroll-behavior: smooth; }
+
+        body {
+            background: var(--purple-bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(167, 139, 218, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(107, 63, 160, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(201, 167, 255, 0.3) 0%, transparent 50%);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%236b3fa0' stroke-opacity='0.12' stroke-width='2'%3E%3Cpath d='M0 100 Q 100 50 200 100 T 400 100'/%3E%3Cpath d='M0 150 Q 100 100 200 150 T 400 150'/%3E%3Cpath d='M0 200 Q 100 150 200 200 T 400 200'/%3E%3Cpath d='M0 250 Q 100 200 200 250 T 400 250'/%3E%3Cpath d='M0 300 Q 100 250 200 300 T 400 300'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 400px 400px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.7;
+        }
+
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blob-1 {
+            width: 400px; height: 400px;
+            background: rgba(167, 139, 218, 0.5);
+            top: -100px; left: -100px;
+        }
+        .blob-2 {
+            width: 350px; height: 350px;
+            background: rgba(107, 63, 160, 0.3);
+            bottom: -80px; right: -80px;
+        }
+        .blob-3 {
+            width: 300px; height: 300px;
+            background: rgba(201, 167, 255, 0.4);
+            top: 40%; right: 10%;
+        }
+
+        /* ============ TOP NAVBAR ============ */
+        .top-bar {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #4a2580 0%, #3a1f6b 100%);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 30px rgba(58, 31, 107, 0.4),
+                        0 0 0 2px rgba(255, 255, 255, 0.15) inset;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .search-mini {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            padding: 6px 16px;
+            gap: 8px;
+            min-width: 180px;
+        }
+
+        .search-mini i { color: var(--purple-main); font-size: 0.85rem; }
+        .search-mini input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-dark);
+            font-size: 0.8rem;
+            padding: 4px 0;
+            width: 100%;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .search-mini input::placeholder { color: var(--text-muted); }
+
+        .nav-menu {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            transition: 0.25s;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        /* ============ APP TITLE ============ */
+        .app-title-wrap {
+            position: relative;
+            z-index: 5;
+            max-width: 1200px;
+            margin: 0 auto 24px;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 2.4rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 4px 20px rgba(107, 63, 160, 0.6),
+                         0 0 40px rgba(201, 167, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .app-subtitle {
+            font-size: 0.8rem;
+            color: var(--purple-main);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* ============ CONTAINER ============ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ============ GLASS CARD ============ */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 22px 24px;
+            border: 2px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(58, 31, 107, 0.15),
+                        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--purple-main), var(--purple-light), var(--purple-glow));
+            opacity: 0.7;
+        }
+
+        /* ============ SECTION TITLE ============ */
+        .section-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            color: white;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 18px rgba(107, 63, 160, 0.4);
+            margin-bottom: 18px;
+        }
+
+        .section-title i { font-size: 0.9rem; }
+
+        /* ============ BUTTONS ============ */
+        .btn {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid var(--card-border);
+            color: var(--text-dark);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107, 63, 160, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            border: none;
+            color: white;
+            box-shadow: 0 4px 18px rgba(107, 63, 160, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+            box-shadow: 0 6px 24px rgba(107, 63, 160, 0.6);
+        }
+
+        .btn-check-all {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 26px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-check-all:hover {
+            background: linear-gradient(135deg, #388e3c, #4caf50);
+            box-shadow: 0 6px 28px rgba(76, 175, 80, 0.7);
+        }
+
+        .btn-sm { padding: 6px 14px; font-size: 0.75rem; }
+
+        .btn-danger {
+            background: rgba(255, 100, 100, 0.15);
+            border-color: rgba(255, 100, 100, 0.4);
+            color: #c62828;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 100, 100, 0.25);
+        }
+
+        /* ============ FORM ============ */
+        .form-group { margin-bottom: 14px; }
+        .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .form-row .form-group { flex: 1; min-width: 180px; }
+
+        label {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgba(107, 63, 160, 0.2);
+            padding: 11px 18px;
+            border-radius: 30px;
+            color: var(--text-dark);
+            font-size: 0.88rem;
+            width: 100%;
+            transition: 0.25s;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--purple-main);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(107, 63, 160, 0.15);
+        }
+
+        input::placeholder { color: var(--text-muted); }
+
+        /* ============ ITEM LIST ============ */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 16px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 22px;
+            padding: 14px 18px;
+            border: 2px solid rgba(107, 63, 160, 0.15);
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .item-row:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--purple-light);
+            transform: translateX(4px);
+            box-shadow: 0 8px 24px rgba(107, 63, 160, 0.15);
+        }
+
+        .item-thumb {
+            width: 100px;
+            height: 90px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--purple-soft), var(--purple-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            flex-shrink: 0;
+        }
+
+        .item-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .item-info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .item-title-text {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: var(--text-dark);
+            word-break: break-word;
+        }
+
+        .item-category {
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .item-link {
+            font-size: 0.75rem;
+            color: var(--purple-main);
+            word-break: break-all;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 4px 10px;
+            background: rgba(167, 139, 218, 0.15);
+            border-radius: 12px;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .item-link:hover {
+            background: rgba(167, 139, 218, 0.3);
+            text-decoration: underline;
+        }
+
+        .item-meta {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(107, 63, 160, 0.2);
+            color: var(--purple-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: 0.25s;
+        }
+
+        .icon-btn:hover {
+            background: var(--purple-main);
+            color: white;
+            border-color: var(--purple-main);
+            transform: scale(1.1);
+        }
+
+        .icon-btn.delete {
+            color: #c62828;
+            border-color: rgba(198, 40, 40, 0.3);
+        }
+
+        .icon-btn.delete:hover {
+            background: #c62828;
+            color: white;
+            border-color: #c62828;
+        }
+
+        /* ============ CHECK RESULT ============ */
+        .check-result {
+            margin-top: 16px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 20px;
+            border: 2px solid rgba(107, 63, 160, 0.2);
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .check-result.show { display: block; animation: slideDown 0.3s ease; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .check-result h4 {
+            color: var(--purple-main);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            background: rgba(167, 139, 218, 0.1);
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+        }
+
+        .check-item .status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .check-item .status.ok { background: #4caf50; box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); }
+        .check-item .status.bad { background: #f44336; box-shadow: 0 0 8px rgba(244, 67, 54, 0.6); }
+        .check-item .status.checking { background: #ff9800; animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .check-item .url-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-mid);
+        }
+
+        .check-item .status-text {
+            font-weight: 600;
+            font-size: 0.72rem;
+        }
+
+        .check-item .status-text.ok { color: #388e3c; }
+        .check-item .status-text.bad { color: #c62828; }
+        .check-item .status-text.checking { color: #ef6c00; }
+
+        /* ============ AUTH PANEL ============ */
+        .auth-panel {
+            max-width: 520px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 6px;
+            background: rgba(107, 63, 160, 0.1);
+            padding: 6px;
+            border-radius: 40px;
+            margin-bottom: 22px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border-radius: 30px;
+            background: transparent;
+            border: none;
+            color: var(--text-mid);
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-tab.active {
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            color: white;
+            box-shadow: 0 4px 16px rgba(107, 63, 160, 0.4);
+        }
+
+        .auth-heading {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .auth-subheading {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* ============ SEARCH & FILTER BAR ============ */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-bar input { flex: 2; min-width: 200px; }
+        .filter-bar select { flex: 1; min-width: 150px; }
+
+        /* ============ STATS ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.65);
+            border: 2px solid rgba(107, 63, 160, 0.18);
+            border-radius: 20px;
+            padding: 14px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .stat-box:hover {
+            background: white;
+            border-color: var(--purple-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(107, 63, 160, 0.15);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* ============ EMPTY STATE ============ */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            border: 2px dashed rgba(107, 63, 160, 0.3);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            color: var(--purple-light);
+            margin-bottom: 10px;
+        }
+
+        /* ============ UPLOAD ============ */
+        .upload-btn-wrapper { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+
+        .thumb-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 10px;
+            border-radius: 16px;
+            margin-top: 10px;
+            border: 2px solid rgba(107, 63, 160, 0.25);
+        }
+
+        .thumb-preview img {
+            width: 60px; height: 60px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid rgba(107, 63, 160, 0.3);
+        }
+
+        .thumb-preview .preview-info {
+            flex: 1;
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            word-break: break-all;
+            font-weight: 500;
+        }
+
+        .thumb-preview .remove-preview {
+            background: transparent;
+            border: none;
+            color: #c62828;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 6px 10px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .thumb-preview .remove-preview:hover {
+            background: rgba(198, 40, 40, 0.1);
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin: 8px 0;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(107, 63, 160, 0.25);
+        }
+
+        /* ============ USER BADGE ============ */
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 8px 6px 16px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .user-badge i { color: var(--purple-main); font-size: 1.1rem; }
+
+        /* ============ ADMIN TABLE ============ */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin-top: 16px;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(107, 63, 160, 0.15);
+        }
+
+        .admin-table th {
+            color: var(--purple-main);
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge {
+            background: rgba(107, 63, 160, 0.15);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: var(--purple-main);
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            color: var(--text-dark);
+            padding: 14px 24px;
+            border-radius: 30px;
+            box-shadow: 0 12px 30px rgba(58, 31, 107, 0.3),
+                        0 0 0 2px rgba(107, 63, 160, 0.2);
+            border-left: 5px solid var(--purple-main);
+            font-size: 0.85rem;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ============ BOTTOM ACTION BAR ============ */
+        .bottom-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4a2580, #3a1f6b);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 12px 40px rgba(58, 31, 107, 0.5),
+                        0 0 0 3px rgba(255, 255, 255, 0.15) inset;
+            z-index: 100;
+        }
+
+        .bottom-bar .icon-btn-dark {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: 0.25s;
+            position: relative;
+        }
+
+        .bottom-bar .icon-btn-dark:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.1);
+        }
+
+        .bottom-bar .icon-btn-dark .badge-count {
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            background: #ff5252;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            display: none;
+        }
+
+        .bottom-bar .icon-btn-dark .badge-count.show { display: block; }
+
+        .bottom-bar .plus-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: var(--purple-dark);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+            transition: 0.25s;
+        }
+
+        .bottom-bar .plus-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--purple-glow);
+        }
+
+        /* ============ MODAL ============ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(42, 26, 74, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-overlay.show { display: flex; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: linear-gradient(135deg, #ffffff, #f5eeff);
+            border-radius: 28px;
+            max-width: 720px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(58, 31, 107, 0.5),
+                        0 0 0 3px rgba(201, 167, 255, 0.4);
+            padding: 26px 28px;
+            position: relative;
+            animation: popIn 0.3s ease;
+            border: 2px solid rgba(107, 63, 160, 0.25);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: rgba(198, 40, 40, 0.1);
+            border: 2px solid rgba(198, 40, 40, 0.3);
+            color: #c62828;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s;
+            z-index: 2;
+        }
+        .modal-close:hover {
+            background: #c62828;
+            color: white;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px dashed rgba(107, 63, 160, 0.25);
+        }
+
+        .modal-avatar {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 20px rgba(107, 63, 160, 0.4);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .modal-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-title-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .modal-title-email {
+            font-size: 0.82rem;
+            color: var(--purple-main);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .modal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .modal-info-box {
+            background: rgba(167, 139, 218, 0.12);
+            border: 2px solid rgba(107, 63, 160, 0.15);
+            border-radius: 16px;
+            padding: 12px 14px;
+        }
+
+        .modal-info-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .modal-info-value {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .modal-info-value.mono {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            background: rgba(107, 63, 160, 0.12);
+            padding: 4px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            color: var(--purple-dark);
+        }
+
+        .modal-section-title {
+            font-size: 0.85rem;
+            color: var(--purple-main);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .modal-item-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(107, 63, 160, 0.15);
+            border-radius: 14px;
+            padding: 10px 14px;
+            transition: 0.2s;
+        }
+
+        .modal-item-row:hover {
+            border-color: var(--purple-light);
+            background: white;
+        }
+
+        .modal-item-thumb {
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--purple-soft), var(--purple-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .modal-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .modal-item-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+        .modal-item-url {
+            font-size: 0.7rem;
+            color: var(--purple-main);
+            word-break: break-all;
+            text-decoration: none;
+        }
+        .modal-item-url:hover { text-decoration: underline; }
+
+        .modal-item-badge {
+            font-size: 0.65rem;
+            background: rgba(107, 63, 160, 0.15);
+            color: var(--purple-main);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .modal-empty {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .copy-email-btn {
+            background: rgba(76, 175, 80, 0.15);
+            border: 2px solid rgba(76, 175, 80, 0.4);
+            color: #388e3c;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            transition: 0.25s;
+            font-family: inherit;
+        }
+        .copy-email-btn:hover {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .admin-view-btn {
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.25s;
+            font-family: inherit;
+            box-shadow: 0 3px 12px rgba(107, 63, 160, 0.3);
+        }
+        .admin-view-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 18px rgba(107, 63, 160, 0.5);
+        }
+
+        /* ============ TRASH / FAVORITES / PROFILE MODAL SPECIFIC ============ */
+        .action-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(107, 63, 160, 0.2);
+            color: var(--text-dark);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.25s;
+            font-family: inherit;
+        }
+        .action-btn:hover {
+            background: white;
+            border-color: var(--purple-light);
+            box-shadow: 0 4px 12px rgba(107, 63, 160, 0.15);
+        }
+        .action-btn.restore {
+            color: #388e3c;
+            border-color: rgba(76, 175, 80, 0.4);
+        }
+        .action-btn.restore:hover {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+        .action-btn.perm-delete {
+            color: #c62828;
+            border-color: rgba(198, 40, 40, 0.3);
+        }
+        .action-btn.perm-delete:hover {
+            background: #c62828;
+            color: white;
+            border-color: #c62828;
+        }
+        .action-btn.empty-trash {
+            background: linear-gradient(135deg, #c62828, #e53935);
+            border: none;
+            color: white;
+            padding: 10px 22px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            box-shadow: 0 4px 16px rgba(198, 40, 40, 0.4);
+            letter-spacing: 0.5px;
+        }
+        .action-btn.empty-trash:hover {
+            background: linear-gradient(135deg, #b71c1c, #d32f2f);
+            box-shadow: 0 6px 22px rgba(198, 40, 40, 0.6);
+        }
+
+        .trash-item-row {
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 14px;
+            align-items: start;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(107, 63, 160, 0.15);
+            border-radius: 16px;
+            padding: 12px 16px;
+            transition: 0.2s;
+        }
+        .trash-item-row:hover {
+            border-color: var(--purple-light);
+            background: white;
+        }
+        .trash-thumb {
+            width: 56px; height: 56px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--purple-soft), var(--purple-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .trash-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .trash-info { min-width: 0; }
+        .trash-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+        .trash-url {
+            font-size: 0.72rem;
+            color: var(--purple-main);
+            word-break: break-all;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .trash-url:hover { text-decoration: underline; }
+        .trash-meta {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .fav-item-row {
+            display: grid;
+            grid-template-columns: 28px 56px 1fr;
+            gap: 12px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(107, 63, 160, 0.15);
+            border-radius: 16px;
+            padding: 10px 14px;
+            transition: 0.2s;
+        }
+        .fav-item-row:hover {
+            border-color: var(--purple-light);
+            background: white;
+        }
+        .fav-serial {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--purple-main);
+            text-align: center;
+            width: 28px;
+            flex-shrink: 0;
+        }
+        .fav-thumb {
+            width: 56px; height: 56px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--purple-soft), var(--purple-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .fav-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .fav-info { min-width: 0; }
+        .fav-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 2px;
+        }
+        .fav-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-dark);
+        }
+        .fav-cat {
+            font-size: 0.65rem;
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .fav-url {
+            font-size: 0.72rem;
+            color: var(--purple-main);
+            word-break: break-all;
+            text-decoration: none;
+        }
+        .fav-url:hover { text-decoration: underline; }
+
+        /* Profile photo upload */
+        .profile-photo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 2px dashed rgba(107, 63, 160, 0.25);
+        }
+        .profile-photo-preview {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--purple-main), var(--purple-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 6px 22px rgba(107, 63, 160, 0.4);
+            border: 3px solid white;
+        }
+        .profile-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ============ UTILITY ============ */
+        .hidden { display: none !important; }
+        .mt-3 { margin-top: 16px; }
+        .text-muted { color: var(--text-muted); font-size: 0.82rem; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .item-row {
+                grid-template-columns: 70px 1fr;
+                gap: 12px;
+            }
+            .item-thumb { width: 70px; height: 70px; }
+            .item-actions {
+                grid-column: 1 / -1;
+                justify-content: flex-end;
+            }
+            .app-title { font-size: 1.7rem; }
+            .nav-menu { display: none; }
+            .search-mini { min-width: 100px; flex: 1; }
+            body { padding: 12px; padding-bottom: 90px; }
+            .glass-card { padding: 18px; }
+            .modal-box { padding: 20px; }
+            .fav-item-row { grid-template-columns: 24px 44px 1fr; gap: 8px; }
+            .fav-thumb { width: 44px; height: 44px; }
+            .bottom-bar { gap: 10px; padding: 8px 14px; }
+            .bottom-bar .icon-btn-dark { width: 34px; height: 34px; font-size: 0.85rem; }
+            .bottom-bar .plus-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+            .profile-photo-section { flex-direction: column; align-items: center; text-align: center; }
+            .trash-item-row { grid-template-columns: 44px 1fr; gap: 10px; }
+            .trash-thumb { width: 44px; height: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- ============ TOP NAVBAR ============ -->
+<div class="top-bar">
+    <div class="search-mini">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search..." id="topSearchInput">
+    </div>
+    <ul class="nav-menu">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#vault">PROFILE</a></li>
+        <li><a href="#check">CHECK</a></li>
+        <li><a href="#vault">GOALS</a></li>
+        <li><a href="#contact">UPDATE</a></li>
+    </ul>
+</div>
+
+<!-- ============ APP TITLE ============ -->
+<div class="app-title-wrap" id="home">
+    <div class="app-title">LinkVault</div>
+    <div class="app-subtitle">Purple Edition · Personal Vault</div>
+</div>
+
+<div class="container" id="app">
+
+    <div id="toastContainer"></div>
+
+    <!-- ============ AUTH SECTION ============ -->
+    <div id="authSection" class="glass-card auth-panel">
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="showLoginBtn">Login</button>
+            <button class="auth-tab" id="showRegisterBtn">Register</button>
+        </div>
+
+        <div id="loginForm">
+            <h2 class="auth-heading">Welcome Back 💜</h2>
+            <p class="auth-subheading">Sign in to access your vault</p>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" id="loginSubmitBtn" style="width: 100%; justify-content: center; margin-top: 6px;">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <p class="text-muted mt-3" style="text-align: center;">
+                No account? <a href="#" id="switchToRegisterLink" style="color: var(--purple-main); font-weight: 700; text-decoration: none;">Register here</a>
+            </p>
+        </div>
+
+        <div id="registerForm" class="hidden">
+            <h2 class="auth-heading">Create Account 💜</h2>
+            <p class="auth-subheading">Join the purple vault</p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="regUsername" placeholder="johndoe">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="john@example.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="regPassword" placeholder="Min 4 characters">
+            </div>
+            <button class="btn btn-primary" id="registerSubmitBtn" style="width: 100%; justify-content: center; margin-top: 6px;">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+            <p class="text-muted mt-3" style="text-align: center;">
+                Already registered? <a href="#" id="switchToLoginLink" style="color: var(--purple-main); font-weight: 700; text-decoration: none;">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ DASHBOARD ============ -->
+    <div id="dashboardSection" class="hidden" style="display: flex; flex-direction: column; gap: 20px;">
+
+        <div class="glass-card" style="padding: 18px 24px;">
+            <div class="flex-between">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div class="item-thumb" style="width: 50px; height: 50px; font-size: 1.2rem;" id="dashAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Welcome back</div>
+                        <div style="font-weight: 700; font-size: 1.05rem;" id="displayUsername">User</div>
+                    </div>
+                </div>
+                <button class="btn btn-sm" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-card" id="vault">
+            <div class="section-title">
+                <i class="fas fa-plus-circle"></i> Save Link or Image
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="itemTitle" placeholder="My favorite site">
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="url" id="itemUrl" placeholder="https://...">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category (optional)</label>
+                    <input type="text" id="itemCategory" placeholder="e.g. work, fun">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 8px;">
+                <label><i class="fas fa-image"></i> Thumbnail (URL or upload)</label>
+                <div class="upload-row">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="url" id="itemThumb" placeholder="Paste image URL here...">
+                    </div>
+                </div>
+                <div class="or-divider">OR UPLOAD FROM DEVICE</div>
+                <div class="upload-btn-wrapper">
+                    <button type="button" class="btn btn-sm" id="uploadImageBtn">
+                        <i class="fas fa-upload"></i> Choose Image
+                    </button>
+                    <button type="button" class="btn btn-sm hidden" id="clearUploadBtn">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                    <input type="file" id="imageFileInput" accept="image/*" class="hidden">
+                </div>
+                <div id="uploadPreview" class="thumb-preview hidden">
+                    <img id="uploadPreviewImg" src="" alt="preview">
+                    <div class="preview-info" id="uploadPreviewInfo">No file selected</div>
+                    <button type="button" class="remove-preview" id="removePreviewBtn" title="Remove">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="addItemBtn" style="margin-top: 10px;">
+                <i class="fas fa-save"></i> Save to Vault
+            </button>
+        </div>
+
+        <div class="glass-card">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statCategories">0</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statImages">0</div>
+                    <div class="stat-label">With Images</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Available</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <div class="filter-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Search by title or URL...">
+                <select id="categoryFilter">
+                    <option value="">All categories</option>
+                </select>
+                <button class="btn btn-sm" id="clearFilterBtn">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+                <button class="btn btn-check-all" id="checkAllBtn">
+                    <i class="fas fa-check-double"></i> CHECK ALL LINKS
+                </button>
+            </div>
+
+            <div class="check-result" id="checkResult">
+                <h4><i class="fas fa-heartbeat"></i> Link Check Results</h4>
+                <div id="checkResultList"></div>
+            </div>
+        </div>
+
+        <div class="glass-card" id="check">
+            <div class="section-title">
+                <i class="fas fa-list-ul"></i> My Vault · All Items
+            </div>
+            <div id="itemsContainer" class="items-list"></div>
+            <div id="emptyItemsMsg" class="empty-state hidden">
+                <i class="fas fa-box-open"></i>
+                <p style="margin-top: 8px;">Your vault is empty. Save your first link above! 💜</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ ADMIN SECTION ============ -->
+    <div id="adminSection" class="hidden">
+        <div class="glass-card">
+            <div class="section-title">
+                <i class="fas fa-shield-alt"></i> Admin Dashboard
+            </div>
+            <p class="text-muted" style="margin-bottom: 14px;">All registered users · Developer access only</p>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Password Hash</th>
+                            <th>Items</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+            <button class="btn btn-sm mt-3" id="closeAdminBtn">
+                <i class="fas fa-arrow-left"></i> Back to Vault
+            </button>
+        </div>
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <div class="glass-card" id="contact" style="text-align: center; padding: 20px;">
+        <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 10px;">
+            <a href="#" style="color: var(--purple-main); font-size: 1.2rem;"><i class="fab fa-github"></i></a>
+            <a href="#" style="color: var(--purple-main); font-size: 1.2rem;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: var(--purple-main); font-size: 1.2rem;"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <p class="text-muted">Made with 💜 · LinkVault © 2024</p>
+    </div>
+
+</div>
+
+<!-- ============ BOTTOM ACTION BAR ============ -->
+<div class="bottom-bar">
+    <button class="icon-btn-dark" id="trashBtn" title="Trash (recently deleted)">
+        <i class="fas fa-trash-alt"></i>
+        <span class="badge-count" id="trashBadge">0</span>
+    </button>
+    <button class="icon-btn-dark" id="favoritesBtn" title="Favorites (all saved links)">
+        <i class="far fa-heart"></i>
+    </button>
+    <button class="plus-btn" id="plusBtn" title="Add new">
+        <i class="fas fa-plus"></i>
+    </button>
+    <button class="icon-btn-dark" id="searchFocusBtn" title="Search">
+        <i class="fas fa-search"></i>
+    </button>
+    <button class="icon-btn-dark" id="profileBtn" title="Profile">
+        <i class="far fa-user"></i>
+    </button>
+</div>
+
+<!-- ============ USER DETAILS MODAL ============ -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closeModalBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<!-- ============ TRASH MODAL ============ -->
+<div class="modal-overlay" id="trashModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closeTrashModalBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="trashModalContent"></div>
+    </div>
+</div>
+
+<!-- ============ FAVORITES / ALL LINKS MODAL ============ -->
+<div class="modal-overlay" id="favoritesModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closeFavoritesModalBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="favoritesModalContent"></div>
+    </div>
+</div>
+
+<!-- ============ PROFILE / ACCOUNT MODAL ============ -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closeProfileModalBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="profileModalContent"></div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const USERS_KEY = 'linkvault_users';
+        const SESSION_KEY = 'linkvault_session';
+        const ITEMS_KEY_PREFIX = 'linkvault_items_';
+        const TRASH_KEY_PREFIX = 'linkvault_trash_';
+        const PROFILE_PHOTO_KEY_PREFIX = 'linkvault_photo_';
+
+        const ADMIN_EMAIL = 'shadow1234567@gmail.com';
+        const ADMIN_PASSWORD = 'hinata999+';
+
+        // ---------- UTILS ----------
+        function getUsers() {
+            const raw = localStorage.getItem(USERS_KEY);
+            return raw ? JSON.parse(raw) : [];
+        }
+        function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+        function getSession() {
+            const raw = localStorage.getItem(SESSION_KEY);
+            return raw ? JSON.parse(raw) : null;
+        }
+        function setSession(s) {
+            if (s) localStorage.setItem(SESSION_KEY, JSON.stringify(s));
+            else localStorage.removeItem(SESSION_KEY);
+        }
+        function getUserItems(username) {
+            const raw = localStorage.getItem(ITEMS_KEY_PREFIX + username);
+            return raw ? JSON.parse(raw) : [];
+        }
+        function saveUserItems(username, items) {
+            localStorage.setItem(ITEMS_KEY_PREFIX + username, JSON.stringify(items));
+        }
+        function getTrashItems(username) {
+            const raw = localStorage.getItem(TRASH_KEY_PREFIX + username);
+            return raw ? JSON.parse(raw) : [];
+        }
+        function saveTrashItems(username, items) {
+            localStorage.setItem(TRASH_KEY_PREFIX + username, JSON.stringify(items));
+        }
+        function getUserPhoto(username) {
+            return localStorage.getItem(PROFILE_PHOTO_KEY_PREFIX + username) || null;
+        }
+        function saveUserPhoto(username, dataUrl) {
+            if (dataUrl) localStorage.setItem(PROFILE_PHOTO_KEY_PREFIX + username, dataUrl);
+            else localStorage.removeItem(PROFILE_PHOTO_KEY_PREFIX + username);
+        }
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return 'h' + Math.abs(hash).toString(16);
+        }
+        function showToast(message, isGood = true) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.borderLeftColor = isGood ? '#4caf50' : '#f44336';
+            toast.innerHTML = `<i class="fas ${isGood ? 'fa-check-circle' : 'fa-exclamation-circle'}" style="color:${isGood ? '#4caf50' : '#f44336'};"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2800);
+        }
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>"]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                if (m === '"') return '&quot;';
+                return m;
+            });
+        }
+
+        // ---------- DOM ----------
+        const authSection = document.getElementById('authSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const adminSection = document.getElementById('adminSection');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showLoginBtn = document.getElementById('showLoginBtn');
+        const showRegisterBtn = document.getElementById('showRegisterBtn');
+        const switchToRegisterLink = document.getElementById('switchToRegisterLink');
+        const switchToLoginLink = document.getElementById('switchToLoginLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const displayUsername = document.getElementById('displayUsername');
+        const itemsContainer = document.getElementById('itemsContainer');
+        const emptyItemsMsg = document.getElementById('emptyItemsMsg');
+        const searchInput = document.getElementById('searchInput');
+        const topSearchInput = document.getElementById('topSearchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const clearFilterBtn = document.getElementById('clearFilterBtn');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const adminTableBody = document.getElementById('adminTableBody');
+        const closeAdminBtn = document.getElementById('closeAdminBtn');
+        const checkAllBtn = document.getElementById('checkAllBtn');
+        const checkResult = document.getElementById('checkResult');
+        const checkResultList = document.getElementById('checkResultList');
+
+        const itemTitle = document.getElementById('itemTitle');
+        const itemUrl = document.getElementById('itemUrl');
+        const itemCategory = document.getElementById('itemCategory');
+        const itemThumb = document.getElementById('itemThumb');
+
+        const uploadImageBtn = document.getElementById('uploadImageBtn');
+        const clearUploadBtn = document.getElementById('clearUploadBtn');
+        const imageFileInput = document.getElementById('imageFileInput');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const uploadPreviewImg = document.getElementById('uploadPreviewImg');
+        const uploadPreviewInfo = document.getElementById('uploadPreviewInfo');
+        const removePreviewBtn = document.getElementById('removePreviewBtn');
+
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const regUsername = document.getElementById('regUsername');
+        const regEmail = document.getElementById('regEmail');
+        const regPassword = document.getElementById('regPassword');
+
+        const trashBtn = document.getElementById('trashBtn');
+        const favoritesBtn = document.getElementById('favoritesBtn');
+        const searchFocusBtn = document.getElementById('searchFocusBtn');
+        const profileBtn = document.getElementById('profileBtn');
+        const trashBadge = document.getElementById('trashBadge');
+
+        let currentUser = null;
+        let uploadedImageData = null;
+
+        // ---------- UI ----------
+        function updateAuthUI() {
+            const session = getSession();
+            if (session) {
+                currentUser = session;
+                displayUsername.textContent = session.username;
+                authSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                adminSection.classList.add('hidden');
+
+                const photo = getUserPhoto(session.username);
+                const dashAvatar = document.getElementById('dashAvatar');
+                if (photo) {
+                    dashAvatar.innerHTML = `<img src="${photo}" alt="avatar">`;
+                } else {
+                    dashAvatar.innerHTML = '<i class="fas fa-user"></i>';
+                }
+
+                if (session.email === ADMIN_EMAIL) {
+                    if (!document.getElementById('adminToggleBtn')) {
+                        const adminBtn = document.createElement('button');
+                        adminBtn.id = 'adminToggleBtn';
+                        adminBtn.className = 'btn btn-sm';
+                        adminBtn.innerHTML = '<i class="fas fa-crown" style="color: #ffb347;"></i> Admin';
+                        adminBtn.onclick = () => {
+                            dashboardSection.classList.add('hidden');
+                            adminSection.classList.remove('hidden');
+                            renderAdminTable();
+                            adminSection.scrollIntoView({ behavior: 'smooth' });
+                        };
+                        document.querySelector('#dashboardSection .glass-card .flex-between').appendChild(adminBtn);
+                    }
+                } else {
+                    const adminBtn = document.getElementById('adminToggleBtn');
+                    if (adminBtn) adminBtn.remove();
+                }
+
+                renderUserItems();
+                updateCategoryFilter();
+                updateStats();
+                updateTrashBadge();
+            } else {
+                currentUser = null;
+                authSection.classList.remove('hidden');
+                dashboardSection.classList.add('hidden');
+                adminSection.classList.add('hidden');
+                const adminBtn = document.getElementById('adminToggleBtn');
+                if (adminBtn) adminBtn.remove();
+                loginEmail.value = '';
+                loginPassword.value = '';
+                trashBadge.classList.remove('show');
+            }
+        }
+
+        function updateTrashBadge() {
+            if (!currentUser) { trashBadge.classList.remove('show'); return; }
+            const trash = getTrashItems(currentUser.username);
+            if (trash.length > 0) {
+                trashBadge.textContent = trash.length;
+                trashBadge.classList.add('show');
+            } else {
+                trashBadge.classList.remove('show');
+            }
+        }
+
+        function updateStats() {
+            if (!currentUser) return;
+            const items = getUserItems(currentUser.username);
+            const categories = new Set(items.map(i => i.category).filter(Boolean));
+            const withImg = items.filter(i => i.thumbnail).length;
+            document.getElementById('statTotal').textContent = items.length;
+            document.getElementById('statCategories').textContent = categories.size;
+            document.getElementById('statImages').textContent = withImg;
+        }
+
+        function renderUserItems() {
+            if (!currentUser) return;
+            const username = currentUser.username;
+            let items = getUserItems(username);
+
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            const category = categoryFilter.value;
+
+            if (searchTerm) {
+                items = items.filter(item =>
+                    item.title.toLowerCase().includes(searchTerm) ||
+                    item.url.toLowerCase().includes(searchTerm)
+                );
+            }
+            if (category) {
+                items = items.filter(item => item.category === category);
+            }
+
+            if (items.length === 0) {
+                itemsContainer.innerHTML = '';
+                emptyItemsMsg.classList.remove('hidden');
+                return;
+            }
+            emptyItemsMsg.classList.add('hidden');
+
+            let html = '';
+            items.forEach((item) => {
+                const thumbHtml = item.thumbnail
+                    ? `<img src="${escapeHtml(item.thumbnail)}" alt="thumbnail" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-image\\'></i>'">`
+                    : `<i class="fas fa-image"></i>`;
+
+                html += `
+                    <div class="item-row" data-item-id="${item.id}">
+                        <div class="item-thumb">${thumbHtml}</div>
+                        <div class="item-info">
+                            <div class="item-header">
+                                <span class="item-title-text">${escapeHtml(item.title)}</span>
+                                ${item.category ? `<span class="item-category">${escapeHtml(item.category)}</span>` : ''}
+                            </div>
+                            <a class="item-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener" title="${escapeHtml(item.url)}">
+                                <i class="fas fa-external-link-alt" style="font-size:0.7rem;"></i> ${escapeHtml(item.url)}
+                            </a>
+                            <div class="item-meta">
+                                <i class="far fa-clock"></i> ${new Date(item.createdAt).toLocaleString()}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-btn copy-btn" data-url="${escapeHtml(item.url)}" title="Copy URL">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <a class="icon-btn open-btn" href="${escapeHtml(item.url)}" target="_blank" rel="noopener" title="Open link">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <button class="icon-btn delete delete-btn" data-id="${item.id}" title="Delete (move to trash)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            itemsContainer.innerHTML = html;
+
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const url = e.currentTarget.getAttribute('data-url');
+                    navigator.clipboard.writeText(url).then(() => {
+                        showToast('URL copied 💜');
+                    }).catch(() => showToast('Failed to copy', false));
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = Number(e.currentTarget.getAttribute('data-id'));
+                    deleteItemById(id);
+                });
+            });
+        }
+
+        function deleteItemById(id) {
+            if (!currentUser) return;
+            const username = currentUser.username;
+            let items = getUserItems(username);
+            const itemIndex = items.findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+            const item = items[itemIndex];
+            items.splice(itemIndex, 1);
+            saveUserItems(username, items);
+
+            const trash = getTrashItems(username);
+            item.deletedAt = new Date().toISOString();
+            trash.unshift(item);
+            saveTrashItems(username, trash);
+
+            renderUserItems();
+            updateCategoryFilter();
+            updateStats();
+            updateTrashBadge();
+            showToast('Item moved to trash 💜');
+        }
+
+        function updateCategoryFilter() {
+            if (!currentUser) return;
+            const items = getUserItems(currentUser.username);
+            const categories = [...new Set(items.map(i => i.category).filter(Boolean))];
+            const currentVal = categoryFilter.value;
+            categoryFilter.innerHTML = '<option value="">All categories</option>' +
+                categories.map(c => `<option value="${escapeHtml(c)}" ${currentVal === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
+        }
+
+        function addNewItem() {
+            if (!currentUser) return;
+            const title = itemTitle.value.trim();
+            const url = itemUrl.value.trim();
+            const category = itemCategory.value.trim();
+            const thumbUrl = itemThumb.value.trim();
+
+            if (!title || !url) {
+                showToast('Title and URL are required', false);
+                return;
+            }
+
+            let finalThumbnail = '';
+            if (uploadedImageData) finalThumbnail = uploadedImageData;
+            else if (thumbUrl) finalThumbnail = thumbUrl;
+
+            const items = getUserItems(currentUser.username);
+            const newItem = {
+                id: Date.now() + Math.floor(Math.random() * 1000),
+                title, url,
+                category: category || '',
+                thumbnail: finalThumbnail,
+                createdAt: new Date().toISOString()
+            };
+            items.push(newItem);
+            saveUserItems(currentUser.username, items);
+
+            itemTitle.value = '';
+            itemUrl.value = '';
+            itemCategory.value = '';
+            itemThumb.value = '';
+            clearUploadedImage();
+
+            renderUserItems();
+            updateCategoryFilter();
+            updateStats();
+            showToast('Saved to vault 💜');
+        }
+
+        function clearUploadedImage() {
+            uploadedImageData = null;
+            imageFileInput.value = '';
+            uploadPreview.classList.add('hidden');
+            uploadPreviewImg.src = '';
+            uploadPreviewInfo.textContent = 'No file selected';
+            clearUploadBtn.classList.add('hidden');
+        }
+
+        // ---------- CHECK ALL LINKS ----------
+        function checkAllLinks() {
+            if (!currentUser) {
+                showToast('Please login first', false);
+                return;
+            }
+            const items = getUserItems(currentUser.username);
+            if (items.length === 0) {
+                showToast('No links to check', false);
+                return;
+            }
+
+            checkResult.classList.add('show');
+            checkResultList.innerHTML = '';
+
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'check-item';
+                row.innerHTML = `
+                    <span class="status checking"></span>
+                    <span class="url-text" title="${escapeHtml(item.url)}">
+                        <strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.url)}
+                    </span>
+                    <span class="status-text checking">CHECKING...</span>
+                `;
+                checkResultList.appendChild(row);
+            });
+
+            showToast(`Checking ${items.length} links...`);
+
+            const checkRows = checkResultList.querySelectorAll('.check-item');
+            items.forEach((item, index) => {
+                const row = checkRows[index];
+                const statusDot = row.querySelector('.status');
+                const statusText = row.querySelector('.status-text');
+
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 8000);
+
+                fetch(item.url, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    signal: controller.signal,
+                    cache: 'no-store'
+                })
+                .then(() => {
+                    clearTimeout(timeout);
+                    statusDot.className = 'status ok';
+                    statusText.className = 'status-text ok';
+                    statusText.textContent = '✓ REACHABLE';
+                })
+                .catch(() => {
+                    clearTimeout(timeout);
+                    const img = new Image();
+                    const imgTimeout = setTimeout(() => {
+                        statusDot.className = 'status bad';
+                        statusText.className = 'status-text bad';
+                        statusText.textContent = '✗ UNREACHABLE';
+                    }, 5000);
+
+                    img.onload = () => {
+                        clearTimeout(imgTimeout);
+                        statusDot.className = 'status ok';
+                        statusText.className = 'status-text ok';
+                        statusText.textContent = '✓ REACHABLE';
+                    };
+                    img.onerror = () => {
+                        clearTimeout(imgTimeout);
+                        statusDot.className = 'status bad';
+                        statusText.className = 'status-text bad';
+                        statusText.textContent = '✗ UNREACHABLE';
+                    };
+                    img.src = item.url + (item.url.includes('?') ? '&' : '?') + '_cb=' + Date.now();
+                });
+            });
+        }
+
+        // ---------- ADMIN ----------
+        function renderAdminTable() {
+            const users = getUsers();
+            let rows = '';
+            users.forEach(user => {
+                const items = getUserItems(user.username);
+                const itemCount = items.length;
+                const regDate = user.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                    : 'N/A';
+                const isAdmin = user.email === ADMIN_EMAIL;
+
+                rows += `<tr>
+                    <td>
+                        <i class="fas fa-user" style="color: var(--purple-main);"></i>
+                        ${escapeHtml(user.username)}
+                        ${isAdmin ? '<i class="fas fa-crown" style="color: #ffb347; margin-left: 6px;" title="Admin"></i>' : ''}
+                    </td>
+                    <td>
+                        <span style="word-break: break-all;">${escapeHtml(user.email)}</span>
+                    </td>
+                    <td><span class="badge">${user.passwordHash}</span></td>
+                    <td><strong>${itemCount}</strong></td>
+                    <td><span class="text-muted" style="font-size: 0.72rem;">${regDate}</span></td>
+                    <td>
+                        <button class="admin-view-btn" data-username="${escapeHtml(user.username)}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            if (users.length === 0) {
+                rows = '<tr><td colspan="6" style="text-align:center; padding: 30px;">No users yet.</td></tr>';
+            }
+            adminTableBody.innerHTML = rows;
+
+            document.querySelectorAll('.admin-view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const username = e.currentTarget.getAttribute('data-username');
+                    openUserModal(username);
+                });
+            });
+        }
+
+        // ---------- OPEN USER DETAILS MODAL ----------
+        function openUserModal(username) {
+            const users = getUsers();
+            const user = users.find(u => u.username === username);
+            if (!user) {
+                showToast('User not found', false);
+                return;
+            }
+
+            const items = getUserItems(user.username);
+            const regDate = user.createdAt
+                ? new Date(user.createdAt).toLocaleString()
+                : 'N/A';
+            const isAdmin = user.email === ADMIN_EMAIL;
+
+            let itemsHtml = '';
+            if (items.length === 0) {
+                itemsHtml = '<div class="modal-empty">No items saved by this user yet.</div>';
+            } else {
+                items.forEach(item => {
+                    const thumbHtml = item.thumbnail
+                        ? `<img src="${escapeHtml(item.thumbnail)}" alt="thumb" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-image\\'></i>'">`
+                        : `<i class="fas fa-image"></i>`;
+
+                    itemsHtml += `
+                        <div class="modal-item-row">
+                            <div class="modal-item-thumb">${thumbHtml}</div>
+                            <div class="modal-item-info">
+                                <div class="modal-item-title">${escapeHtml(item.title)}</div>
+                                <a class="modal-item-url" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                                    <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i> ${escapeHtml(item.url)}
+                                </a>
+                            </div>
+                            ${item.category ? `<span class="modal-item-badge">${escapeHtml(item.category)}</span>` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            const content = `
+                <div class="modal-header">
+                    <div class="modal-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="modal-title-name">
+                            ${escapeHtml(user.username)}
+                            ${isAdmin ? '<i class="fas fa-crown" style="color: #ffb347; font-size: 0.9rem;"></i>' : ''}
+                        </div>
+                        <div class="modal-title-email">
+                            <i class="fas fa-envelope" style="font-size: 0.75rem;"></i>
+                            ${escapeHtml(user.email)}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-info-grid">
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Email / Gmail</div>
+                        <div class="modal-info-value" style="font-size: 0.78rem;">
+                            ${escapeHtml(user.email)}
+                        </div>
+                        <button class="copy-email-btn" data-email="${escapeHtml(user.email)}">
+                            <i class="fas fa-copy"></i> Copy Email
+                        </button>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Password Hash</div>
+                        <div class="modal-info-value mono">${user.passwordHash}</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Registered On</div>
+                        <div class="modal-info-value" style="font-size: 0.78rem;">${regDate}</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Total Items</div>
+                        <div class="modal-info-value" style="font-size: 1.1rem;">${items.length} 🔗</div>
+                    </div>
+                </div>
+
+                <div class="modal-section-title">
+                    <i class="fas fa-list-ul"></i> Saved Links & Images (${items.length})
+                </div>
+                <div class="modal-items-list">
+                    ${itemsHtml}
+                </div>
+            `;
+
+            document.getElementById('modalContent').innerHTML = content;
+
+            const copyBtn = document.querySelector('.copy-email-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', (e) => {
+                    const email = e.currentTarget.getAttribute('data-email');
+                    navigator.clipboard.writeText(email).then(() => {
+                        showToast('Email copied 💜');
+                    }).catch(() => showToast('Failed to copy', false));
+                });
+            }
+
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        // ---------- TRASH MODAL ----------
+        function openTrashModal() {
+            if (!currentUser) { showToast('Please login first', false); return; }
+            const trash = getTrashItems(currentUser.username);
+            let content = `
+                <div class="modal-header">
+                    <div class="modal-avatar" style="background: linear-gradient(135deg, #c62828, #e53935);">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="modal-title-name">Recently Deleted</div>
+                        <div class="modal-title-email" style="color: var(--text-muted);">
+                            ${trash.length} item${trash.length !== 1 ? 's' : ''} in trash
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (trash.length === 0) {
+                content += `<div class="modal-empty" style="padding: 40px;">
+                    <i class="fas fa-trash" style="font-size: 2rem; color: var(--purple-light); display: block; margin-bottom: 10px;"></i>
+                    Trash is empty. Deleted links will appear here.
+                </div>`;
+            } else {
+                content += `<div class="modal-items-list" style="max-height: none;">`;
+                trash.forEach(item => {
+                    const thumbHtml = item.thumbnail
+                        ? `<img src="${escapeHtml(item.thumbnail)}" alt="thumb" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-image\\'></i>'">`
+                        : `<i class="fas fa-image"></i>`;
+                    const deletedAt = item.deletedAt
+                        ? new Date(item.deletedAt).toLocaleString()
+                        : 'Unknown';
+                    content += `
+                        <div class="trash-item-row">
+                            <div class="trash-thumb">${thumbHtml}</div>
+                            <div class="trash-info">
+                                <div class="trash-title">${escapeHtml(item.title)}</div>
+                                <a class="trash-url" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                                    <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i> ${escapeHtml(item.url)}
+                                </a>
+                                <div class="trash-meta">
+                                    <i class="far fa-clock"></i> Deleted: ${deletedAt}
+                                </div>
+                                <div class="action-row">
+                                    <button class="action-btn restore" data-id="${item.id}">
+                                        <i class="fas fa-undo"></i> Restore
+                                    </button>
+                                    <button class="action-btn perm-delete" data-id="${item.id}">
+                                        <i class="fas fa-times-circle"></i> Permanently Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                content += `</div>
+                    <div style="margin-top: 18px; text-align: center;">
+                        <button class="action-btn empty-trash" id="emptyTrashBtn">
+                            <i class="fas fa-dumpster-fire"></i> Empty Trash (${trash.length})
+                        </button>
+                    </div>`;
+            }
+
+            document.getElementById('trashModalContent').innerHTML = content;
+            document.getElementById('trashModal').classList.add('show');
+
+            // Restore buttons
+            document.querySelectorAll('.action-btn.restore').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = Number(e.currentTarget.getAttribute('data-id'));
+                    restoreFromTrash(id);
+                });
+            });
+            // Permanently delete buttons
+            document.querySelectorAll('.action-btn.perm-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = Number(e.currentTarget.getAttribute('data-id'));
+                    permanentlyDeleteFromTrash(id);
+                });
+            });
+            // Empty trash
+            const emptyTrashBtn = document.getElementById('emptyTrashBtn');
+            if (emptyTrashBtn) {
+                emptyTrashBtn.addEventListener('click', () => {
+                    emptyTrash();
+                });
+            }
+        }
+
+        function restoreFromTrash(id) {
+            if (!currentUser) return;
+            const username = currentUser.username;
+            let trash = getTrashItems(username);
+            const itemIndex = trash.findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+            const item = trash[itemIndex];
+            trash.splice(itemIndex, 1);
+            saveTrashItems(username, trash);
+
+            delete item.deletedAt;
+            const items = getUserItems(username);
+            items.push(item);
+            saveUserItems(username, items);
+
+            renderUserItems();
+            updateCategoryFilter();
+            updateStats();
+            updateTrashBadge();
+            showToast('Item restored to vault 💜');
+            openTrashModal(); // refresh
+        }
+
+        function permanentlyDeleteFromTrash(id) {
+            if (!currentUser) return;
+            const username = currentUser.username;
+            let trash = getTrashItems(username);
+            trash = trash.filter(item => item.id !== id);
+            saveTrashItems(username, trash);
+            updateTrashBadge();
+            showToast('Item permanently deleted');
+            openTrashModal(); // refresh
+        }
+
+        function emptyTrash() {
+            if (!currentUser) return;
+            saveTrashItems(currentUser.username, []);
+            updateTrashBadge();
+            showToast('Trash emptied');
+            openTrashModal(); // refresh
+        }
+
+        // ---------- FAVORITES / ALL LINKS MODAL ----------
+        function openFavoritesModal() {
+            if (!currentUser) { showToast('Please login first', false); return; }
+            const items = getUserItems(currentUser.username);
+            let content = `
+                <div class="modal-header">
+                    <div class="modal-avatar" style="background: linear-gradient(135deg, #e91e63, #f06292);">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="modal-title-name">All Saved Links</div>
+                        <div class="modal-title-email" style="color: var(--text-muted);">
+                            ${items.length} link${items.length !== 1 ? 's' : ''} in chronological order
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (items.length === 0) {
+                content += `<div class="modal-empty" style="padding: 40px;">
+                    <i class="fas fa-heart" style="font-size: 2rem; color: var(--purple-light); display: block; margin-bottom: 10px;"></i>
+                    No links saved yet. Add some to see them here.
+                </div>`;
+            } else {
+                content += `<div class="modal-items-list" style="max-height: none;">`;
+                items.forEach((item, index) => {
+                    const thumbHtml = item.thumbnail
+                        ? `<img src="${escapeHtml(item.thumbnail)}" alt="thumb" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-image\\'></i>'">`
+                        : `<i class="fas fa-image"></i>`;
+                    content += `
+                        <div class="fav-item-row">
+                            <div class="fav-serial">${index + 1}</div>
+                            <div class="fav-thumb">${thumbHtml}</div>
+                            <div class="fav-info">
+                                <div class="fav-title-row">
+                                    <span class="fav-title">${escapeHtml(item.title)}</span>
+                                    ${item.category ? `<span class="fav-cat">${escapeHtml(item.category)}</span>` : ''}
+                                </div>
+                                <a class="fav-url" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                                    <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i> ${escapeHtml(item.url)}
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                content += `</div>`;
+            }
+
+            document.getElementById('favoritesModalContent').innerHTML = content;
+            document.getElementById('favoritesModal').classList.add('show');
+        }
+
+        // ---------- PROFILE / ACCOUNT MODAL ----------
+        function openProfileModal() {
+            if (!currentUser) { showToast('Please login first', false); return; }
+            const users = getUsers();
+            const user = users.find(u => u.username === currentUser.username);
+            if (!user) return;
+            const items = getUserItems(user.username);
+            const photo = getUserPhoto(user.username);
+            const regDate = user.createdAt
+                ? new Date(user.createdAt).toLocaleString()
+                : 'N/A';
+
+            const photoHtml = photo
+                ? `<img src="${photo}" alt="profile photo">`
+                : `<i class="fas fa-user"></i>`;
+
+            let content = `
+                <div class="modal-header">
+                    <div class="modal-avatar">
+                        ${photoHtml}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="modal-title-name">${escapeHtml(user.username)}</div>
+                        <div class="modal-title-email">
+                            <i class="fas fa-envelope" style="font-size: 0.75rem;"></i>
+                            ${escapeHtml(user.email)}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-photo-section">
+                    <div class="profile-photo-preview" id="profilePhotoPreview">
+                        ${photoHtml}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="modal-info-label" style="margin-bottom: 6px;">Profile Photo</div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-primary" id="uploadProfilePhotoBtn">
+                                <i class="fas fa-camera"></i> Upload Photo
+                            </button>
+                            <button class="btn btn-sm ${photo ? '' : 'hidden'}" id="removeProfilePhotoBtn">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                            <input type="file" id="profilePhotoInput" accept="image/*" class="hidden">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-info-grid">
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Username</div>
+                        <div class="modal-info-value">${escapeHtml(user.username)}</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Email</div>
+                        <div class="modal-info-value" style="font-size: 0.78rem; word-break: break-all;">${escapeHtml(user.email)}</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Registration Date</div>
+                        <div class="modal-info-value" style="font-size: 0.78rem;">${regDate}</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Total Items</div>
+                        <div class="modal-info-value" style="font-size: 1.1rem;">${items.length} 🔗</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Categories</div>
+                        <div class="modal-info-value" style="font-size: 1.1rem;">${new Set(items.map(i => i.category).filter(Boolean)).size}</div>
+                    </div>
+                    <div class="modal-info-box">
+                        <div class="modal-info-label">Trash Items</div>
+                        <div class="modal-info-value" style="font-size: 1.1rem;">${getTrashItems(user.username).length} 🗑️</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('profileModalContent').innerHTML = content;
+            document.getElementById('profileModal').classList.add('show');
+
+            // Profile photo upload
+            const uploadBtn = document.getElementById('uploadProfilePhotoBtn');
+            const photoInput = document.getElementById('profilePhotoInput');
+            const removeBtn = document.getElementById('removeProfilePhotoBtn');
+            const preview = document.getElementById('profilePhotoPreview');
+
+            uploadBtn.addEventListener('click', () => photoInput.click());
+            photoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please select an image file', false);
+                    photoInput.value = '';
+                    return;
+                }
+                const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+                if (file.size > MAX_SIZE) {
+                    showToast('Photo too large (max 1MB)', false);
+                    photoInput.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const dataUrl = ev.target.result;
+                    saveUserPhoto(user.username, dataUrl);
+                    preview.innerHTML = `<img src="${dataUrl}" alt="profile photo">`;
+                    const dashAvatar = document.getElementById('dashAvatar');
+                    if (dashAvatar) dashAvatar.innerHTML = `<img src="${dataUrl}" alt="avatar">`;
+                    removeBtn.classList.remove('hidden');
+                    showToast('Profile photo updated 💜');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    saveUserPhoto(user.username, null);
+                    preview.innerHTML = '<i class="fas fa-user"></i>';
+                    const dashAvatar = document.getElementById('dashAvatar');
+                    if (dashAvatar) dashAvatar.innerHTML = '<i class="fas fa-user"></i>';
+                    removeBtn.classList.add('hidden');
+                    showToast('Profile photo removed');
+                });
+            }
+        }
+
+        // ---------- MODAL CLOSE HANDLERS ----------
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('userModal').classList.remove('show');
+        });
+        document.getElementById('userModal').addEventListener('click', (e) => {
+            if (e.target.id === 'userModal') e.target.classList.remove('show');
+        });
+
+        document.getElementById('closeTrashModalBtn').addEventListener('click', () => {
+            document.getElementById('trashModal').classList.remove('show');
+        });
+        document.getElementById('trashModal').addEventListener('click', (e) => {
+            if (e.target.id === 'trashModal') e.target.classList.remove('show');
+        });
+
+        document.getElementById('closeFavoritesModalBtn').addEventListener('click', () => {
+            document.getElementById('favoritesModal').classList.remove('show');
+        });
+        document.getElementById('favoritesModal').addEventListener('click', (e) => {
+            if (e.target.id === 'favoritesModal') e.target.classList.remove('show');
+        });
+
+        document.getElementById('closeProfileModalBtn').addEventListener('click', () => {
+            document.getElementById('profileModal').classList.remove('show');
+        });
+        document.getElementById('profileModal').addEventListener('click', (e) => {
+            if (e.target.id === 'profileModal') e.target.classList.remove('show');
+        });
+
+        // ---------- AUTH ----------
+        function handleLogin() {
+            const email = loginEmail.value.trim().toLowerCase();
+            const password = loginPassword.value;
+            if (!email || !password) { showToast('Please fill all fields', false); return; }
+            const users = getUsers();
+            const user = users.find(u => u.email.toLowerCase() === email);
+            if (!user || user.passwordHash !== simpleHash(password)) {
+                showToast('Invalid email or password', false);
+                return;
+            }
+            setSession({ username: user.username, email: user.email });
+            updateAuthUI();
+            showToast(`Welcome back, ${user.username}! 💜`);
+        }
+
+        function handleRegister() {
+            const username = regUsername.value.trim();
+            const email = regEmail.value.trim().toLowerCase();
+            const password = regPassword.value;
+            if (!username || !email || !password) { showToast('All fields are required', false); return; }
+            if (password.length < 4) { showToast('Password must be at least 4 characters', false); return; }
+            const users = getUsers();
+            if (users.some(u => u.email.toLowerCase() === email)) { showToast('Email already registered', false); return; }
+            if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) { showToast('Username already taken', false); return; }
+            const newUser = {
+                username, email,
+                passwordHash: simpleHash(password),
+                createdAt: new Date().toISOString()
+            };
+            users.push(newUser);
+            saveUsers(users);
+            setSession({ username: newUser.username, email: newUser.email });
+            updateAuthUI();
+            showToast('Account created 💜');
+        }
+
+        function handleLogout() {
+            setSession(null);
+            currentUser = null;
+            updateAuthUI();
+            showToast('Logged out');
+        }
+
+        // ---------- EVENTS ----------
+        showLoginBtn.addEventListener('click', () => {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            showLoginBtn.classList.add('active');
+            showRegisterBtn.classList.remove('active');
+        });
+        showRegisterBtn.addEventListener('click', () => {
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            showRegisterBtn.classList.add('active');
+            showLoginBtn.classList.remove('active');
+        });
+        switchToRegisterLink.addEventListener('click', (e) => { e.preventDefault(); showRegisterBtn.click(); });
+        switchToLoginLink.addEventListener('click', (e) => { e.preventDefault(); showLoginBtn.click(); });
+
+        document.getElementById('loginSubmitBtn').addEventListener('click', handleLogin);
+        document.getElementById('registerSubmitBtn').addEventListener('click', handleRegister);
+        logoutBtn.addEventListener('click', handleLogout);
+        addItemBtn.addEventListener('click', addNewItem);
+        checkAllBtn.addEventListener('click', checkAllLinks);
+
+        searchInput.addEventListener('input', () => renderUserItems());
+        topSearchInput.addEventListener('input', (e) => {
+            searchInput.value = e.target.value;
+            renderUserItems();
+        });
+        categoryFilter.addEventListener('change', () => renderUserItems());
+        clearFilterBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            topSearchInput.value = '';
+            categoryFilter.value = '';
+            renderUserItems();
+        });
+
+        closeAdminBtn.addEventListener('click', () => {
+            adminSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+        });
+
+        document.getElementById('plusBtn').addEventListener('click', () => {
+            if (currentUser) document.getElementById('vault').scrollIntoView({ behavior: 'smooth' });
+            else authSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Bottom bar actions
+        trashBtn.addEventListener('click', openTrashModal);
+        favoritesBtn.addEventListener('click', openFavoritesModal);
+        searchFocusBtn.addEventListener('click', () => {
+            searchInput.focus();
+            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        profileBtn.addEventListener('click', openProfileModal);
+
+        uploadImageBtn.addEventListener('click', () => imageFileInput.click());
+        imageFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('Please select an image file', false);
+                imageFileInput.value = '';
+                return;
+            }
+            const MAX_SIZE = 2 * 1024 * 1024;
+            if (file.size > MAX_SIZE) {
+                showToast('Image too large (max 2MB)', false);
+                imageFileInput.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                uploadedImageData = ev.target.result;
+                uploadPreviewImg.src = uploadedImageData;
+                uploadPreviewInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                uploadPreview.classList.remove('hidden');
+                clearUploadBtn.classList.remove('hidden');
+                itemThumb.value = '';
+                showToast('Image uploaded 💜');
+            };
+            reader.readAsDataURL(file);
+        });
+        removePreviewBtn.addEventListener('click', clearUploadedImage);
+        clearUploadBtn.addEventListener('click', clearUploadedImage);
+        itemThumb.addEventListener('input', () => {
+            if (itemThumb.value.trim() && uploadedImageData) {
+                uploadedImageData = null;
+                imageFileInput.value = '';
+                uploadPreview.classList.add('hidden');
+                clearUploadBtn.classList.add('hidden');
+            }
+        });
+
+        // ---------- INIT ----------
+        (function init() {
+            const users = getUsers();
+            if (!users.some(u => u.email === ADMIN_EMAIL)) {
+                users.push({
+                    username: 'shadowAdmin',
+                    email: ADMIN_EMAIL,
+                    passwordHash: simpleHash(ADMIN_PASSWORD),
+                    createdAt: new Date().toISOString()
+                });
+                saveUsers(users);
+            }
+            const adminUsername = users.find(u => u.email === ADMIN_EMAIL)?.username || 'shadowAdmin';
+            if (!localStorage.getItem(ITEMS_KEY_PREFIX + adminUsername)) {
+                localStorage.setItem(ITEMS_KEY_PREFIX + adminUsername, JSON.stringify([]));
+            }
+            updateAuthUI();
+        })();
+
+    })();
+</script>
+</body>
+</html>
